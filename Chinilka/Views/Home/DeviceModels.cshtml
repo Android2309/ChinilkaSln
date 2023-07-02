@@ -1,0 +1,13 @@
+﻿@model DeviceModelsListViewModel
+
+<div class="container">
+    <div class="row my-4">
+        @foreach (var deviceModel in Model.DeviceModels ?? Enumerable.Empty<DeviceModel>())
+        {
+            <div class="col-3 mb-4">
+                <partial name="_DeviceModelSummary" model="deviceModel" />
+            </div>
+        }
+    </div>
+</div>
+

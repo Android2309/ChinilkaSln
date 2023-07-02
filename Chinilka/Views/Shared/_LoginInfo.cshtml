@@ -1,0 +1,24 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ChinilkaUser> SignInManager
+@inject UserManager<ChinilkaUser> UserManager
+
+<div class="d-flex flex-column" style="color:white">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <div>
+            Пользователь: @UserManager.GetUserName(User)
+        </div>
+        <div>
+            <a asp-action="Logout" asp-controller="Account">Выйти</a>
+        </div>
+    }
+    else
+    {
+        <div>
+            <a asp-action="Login" asp-controller="Account">Войти</a>
+        </div>
+        <div>
+            <a asp-action="Register" asp-controller="Account">Регистрация</a>
+        </div>
+    }
+</div>

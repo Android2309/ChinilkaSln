@@ -1,0 +1,14 @@
+﻿@model Cart
+
+<div class="d-flex flex-row">
+    <a class="btn btn-sm btn-secondary" asp-page="/Cart" asp-route-returnurl="@ViewContext.HttpContext.Request.PathAndQuery()">
+        <i class="bi bi-cart"></i>
+    </a>    
+
+    @if (Model?.Lines.Count() > 0)
+    {
+        <small class="text-white text-nowrap ms-1 my-auto">
+            @Model?.ComputeTotalValue().ToString("c")
+        </small>
+    }
+</div>

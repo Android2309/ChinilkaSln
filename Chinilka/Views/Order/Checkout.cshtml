@@ -1,0 +1,49 @@
+﻿@model Order
+
+<div class="container">
+    <h2>Оформление заказа</h2>
+    <p>Ваш заказ</p>
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Количество</th>
+                <th>Товар</th>
+                <th class="text-end">Цена</th>
+                <th class="text-end">Всего</th>
+                <th></th>
+            </tr>
+        </thead>
+        @foreach (var line in Model.Lines)
+        {
+            <tr>
+                <td class="text-center">@line.Quantity</td>
+                <td class="text-start">@line.Product.Name</td>
+                <td class="text-end">@line.Product.Price.ToString("c")</td>
+                <td class="text-end">
+                    @((line.Quantity * line.Product.Price).ToString("c"))
+                </td>
+            </tr>
+        }
+        <tfoot>
+            <tr>
+                <td colspan="3" class="text-end">Итог:</td>
+
+                <td class="text-end">
+                    @Model.Lines.Sum(e => e.Product.Price * e.Quantity).ToString("c");
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <form asp-action="Checkout" method="post">
+        <div class="form-group">
+            <label>Как к Вам обращаться?</label>
+            <input asp-for="Name" class="form-control" />
+        </div>
+        <div class="text-center my-2">
+            <a class="btn btn-primary" href="/Cart">Назад</a>
+            <input class="btn btn-primary" type="submit" value="Подтвердить" />
+        </div>
+    </form>
+</div>

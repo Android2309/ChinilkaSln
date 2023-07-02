@@ -1,0 +1,54 @@
+﻿@model RegisterModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Регистрация</title>
+    <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="bg-dark text-white p-2">
+        <span class="navbar-brand ml-2">Регистрация</span>
+    </div>
+    <div class="m-1 p-1">
+        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+        <form asp-action="Register" asp-controller="Account" method="post">
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <div asp-validation-for="Email" class="text-danger"></div>
+                <input asp-for="Email" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Login"></label>
+                <div asp-validation-for="Login" class="text-danger"></div>
+                <input asp-for="Login" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="UserName"></label>
+                <div asp-validation-for="UserName" class="text-danger"></div>
+                <input asp-for="UserName" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber"></label>
+                <div asp-validation-for="PhoneNumber" class="text-danger"></div>
+                <input asp-for="PhoneNumber" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <div asp-validation-for="Password" class="text-danger"></div>
+                <input asp-for="Password"  class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="PasswordConfirm"></label>
+                <div asp-validation-for="PasswordConfirm" class="text-danger"></div>
+                <input asp-for="PasswordConfirm" class="form-control" />
+            </div>
+            <button class="btn btn-primary mt-2" type="submit">Регистрация</button>
+        </form>
+    </div>
+</body>
+</html>

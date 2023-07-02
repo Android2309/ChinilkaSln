@@ -1,0 +1,122 @@
+﻿@page "/admin/devicemodels"
+@using Chinilka.Models.ViewModels;
+@inherits OwningComponentBase<IChinilkaRepository>
+
+<h3>Модели устройств</h3>
+<table class="table table-sm table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Категория</th>
+            <td />
+        </tr>
+    </thead>
+    <tbody>
+        @if (DeviceModelDisplayList?.Count() > 0)
+        {
+            @foreach (DeviceModel d in DeviceModelDisplayList)
+            {
+                <tr>
+                    <td>@d.Id</td>
+                    <td>@d.Name</td>
+                    <td>@d.Category?.Name</td>
+                    <td>
+                        <NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(d.Id)">
+                            Изменить
+                        </NavLink>
+                        <button class="btn btn-danger btn-sm" @onclick="@(e => OnShowModalClick(d))">
+                            Удалить
+                        </button>
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <NavLink class="btn btn-primary" href="/admin/devicemodels/create">Добавить</NavLink>
+                </td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center">Модели устройств отсутствуют</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<EditForm Model="@PagingInfo" class="d-flex justify-content-center mb-1">
+    <div class="d-flex justify-content-center">
+        <label class="text-end me-2">Элементов на странице</label>
+        <InputNumber @bind-Value="PagingInfo.ItemsPerPage" @onfocusout="() => UpdateData()" @onchange="() => UpdateData()" style="max-width:100px" />
+    </div>
+</EditForm>
+<Pagination ActivePageNumber="@PagingInfo.CurrentPage" TotalPages="@PagingInfo.TotalPages" DisplayPages="@PagingInfo.ItemsPerPage"
+            PageChanged="OnPageChangedAsync" Alignment="Alignment.Center">
+</Pagination>
+<Modal @ref="modal" title="Удалить модель?" UseStaticBackdrop="true">
+    <BodyTemplate>
+        Id: @DeviceModelToDelete.Id <br>
+        @DeviceModelToDelete.Name
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Отмена</Button>
+        <Button Color="ButtonColor.Primary" @onclick="@(e => DeleteDeviceModel(DeviceModelToDelete))">Удалить</Button>
+    </FooterTemplate>
+</Modal>
+
+@code {
+    private IChinilkaRepository Repository => Service;
+    private IEnumerable<DeviceModel> DeviceModelDisplayList { get; set; } = Enumerable.Empty<DeviceModel>();
+
+    private PagingInfo PagingInfo { get; set; } = new PagingInfo { CurrentPage = 1, ItemsPerPage = 10 };
+    private DeviceModel DeviceModelToDelete { get; set; } = new();
+    private Modal modal = default!;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await UpdateData();
+    }
+
+    private async Task OnPageChangedAsync(int newPageNumber)
+    {
+        await Task.Run(() =>
+        {
+            PagingInfo.CurrentPage = newPageNumber;
+        });
+
+        await UpdateData();
+    }
+
+    private async Task UpdateData(int currentPage = 1)
+    {
+        PagingInfo.TotalItems = await Repository.DeviceModels.CountAsync();
+
+        DeviceModelDisplayList = await Repository.DeviceModels
+           .Skip((PagingInfo.CurrentPage - 1) * PagingInfo.ItemsPerPage)
+           .Take(PagingInfo.ItemsPerPage)
+           .ToListAsync();
+    }
+
+    private async Task DeleteDeviceModel(DeviceModel deviceModel)
+    {
+        await Repository.DeleteDeviceModel(deviceModel);
+        await UpdateData();
+    }
+
+    private async Task OnShowModalClick(DeviceModel deviceModel)
+    {
+        DeviceModelToDelete = deviceModel;
+        await modal.ShowAsync();
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await modal.HideAsync();
+    }
+
+    private string GetEditUrl(long id) => $"/admin/devicemodels/edit/{id}";
+}

@@ -1,0 +1,35 @@
+﻿<script src="https://api-maps.yandex.ru/2.1/?apikey=ваш API-ключ&lang=ru_RU" type="text/javascript"></script>
+
+<h2>Контакты:</h2>
+<p>Магазин - сервис "Чинилка", ул. Огородная д.76, Северный жил.массив, Батайск</p>
+
+<div id="map" style="width: 600px; height: 400px; margin-left:auto; margin-right:auto;"></div>
+<script type="text/javascript">
+    //yandex-map
+    ymaps.ready(init);
+
+    function init() {
+        var myMap = new ymaps.Map("map", {
+            center: [47.15400552339684, 39.736912546627025],
+            zoom: 18
+        });
+
+        var myPlacemark = new ymaps.Placemark(
+            [47.15400552339684, 39.736912546627025],
+            {
+                balloonContentHeader: 'Чинилка',
+                balloonContentBody: 'Адрес: г.Батайск,ул.Огородная д.76 <br/>Время работы: Пн-Пт 10:00-22:00, Сб-Вс 12:00-19:00 <br/>тел.: +7(960)468-19-97',
+                balloonContentFooter: 'Магазин-сервис ',
+                hintContent: 'Чинилка'
+            },
+            {
+                iconLayout: 'default#image',
+                iconImageHref: '/images/mark.png',
+                iconImageSize: [40, 56],
+                iconImageOffset: [-20, -45]
+            }
+        );
+
+        myMap.geoObjects.add(myPlacemark);
+    }
+</script>

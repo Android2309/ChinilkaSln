@@ -1,0 +1,70 @@
+﻿:root {
+    --chinilka-orange: #c37516;
+    --chinilka-blue: #0032af;
+    --chinilka-red: #b40000;
+}
+
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+footer {
+    margin-top: auto;
+}
+
+a {
+    color: white;
+    outline: none;
+    text-decoration: none;
+}
+
+/*яндекс карты*/
+[class*="ground-pane"]{
+    filter: grayscale(1)
+}
+
+
+/* header */
+.header-brand {
+    position: center;
+    height: 65px;
+}
+
+/* navigation-menu ///////////////////////////////////////////// */
+.navigation-menu-selectedtext {
+    color: var(--chinilka-orange);
+    text-decoration: none;
+}
+
+/* carousel ///////////////////////////////////////////// */
+.my-carousel .carousel-item {
+    max-height: 600px;
+}
+
+/* trade-in ///////////////////////////////////////////// */
+.trade-in-background {
+    background-image: url("../images/trade_in.png");
+    background-position: right;
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 300px;
+}
+
+.trade-in-background_gradient {
+    background: rgb(255,255,255);
+    background: linear-gradient(117deg, rgba(255,255,255,1) 25%, rgba(195,117,22,0.8785889355742297) 50%, rgba(255,255,255,1) 83%);
+}
+
+/* ховер и фокус эффекты ///////////////////////////////////////////// */
+.hover-text-orange:hover {
+    cursor: pointer;
+    color: white;
+    text-shadow: 0 0 0.38em var(--chinilka-orange), 0 0 0.55em var(--chinilka-orange), 0 0 1.16em var(--chinilka-orange), 0 0 2.33em var(--chinilka-orange), 0 0 4.55em var(--chinilka-orange), 0 0 5.66em var(--chinilka-orange), 0 0 5.66em var(--chinilka-orange), 0 0 8.380em var(--chinilka-orange);
+}
+
+.focus-text-orange:focus {
+    color: var(--chinilka-orange);
+}

@@ -1,0 +1,89 @@
+﻿@page "/admin/devicemodels/edit/{id:long}"
+@page "/admin/devicemodels/create"
+@inherits OwningComponentBase<IChinilkaRepository>
+
+<h3 class="bg-@ThemeColor text-white text-center p-1">@Mode a Product</h3>
+<EditForm Model="DeviceModel" OnValidSubmit="UdateDeviceModelAsync">
+    <DataAnnotationsValidator />
+    @if (Mode == "Edit")
+    {
+        <div class="form-group">
+            <label>ID</label>
+            <input class="form-control" disabled value="@DeviceModel.Id" />
+        </div>
+    }
+    <div class="form-group">
+        <label>Название</label>
+        <ValidationMessage For="@(() => DeviceModel.Name)" />
+        <InputText class="form-control" @bind-Value="DeviceModel.Name" />
+    </div>
+    <div class="form-group">
+        <label>Описание</label>
+        <ValidationMessage For="@(() => DeviceModel.Description)" />
+        <InputText class="form-control" @bind-Value="DeviceModel.Description" />
+    </div>
+    <div class="form-group">
+        <label>Категория</label>
+        <ValidationMessage For="@(() => DeviceModel.CategoryId)" />
+        <CustomSelect TValue="int" Values="Categories"
+                      Parser="@((string str) => int.Parse(str))"
+        @bind-Value="DeviceModel.CategoryId">
+            <option selected disabled value="0">Choose a Device Model</option>
+        </CustomSelect>
+    </div>
+    <div class="form-group">
+        <label>Путь к картинке</label>
+        <InputText class="form-control" @bind-Value="DeviceModel.ImagePath" />
+    </div>
+    <div class="mt-2">
+        <button type="submit" class="btn btn-@ThemeColor">Сохранить</button>
+        <NavLink class="btn btn-secondary" href="/admin/devicemodels">Отмена</NavLink>
+    </div>
+</EditForm>
+
+
+
+@code {
+    public IChinilkaRepository Repository => Service;
+
+    [Inject]
+    public NavigationManager? NavManager { get; set; }
+
+    [Parameter]
+    public long Id { get; set; } = 0;
+
+    public DeviceModel DeviceModel { get; set; } = new();
+
+    public IDictionary<string, int> Categories { get; set; } = new Dictionary<string, int>();
+
+    private Category ParseCategory(string categoryId)
+    {
+        return Repository.Categories.First(_ => _.Id == long.Parse(categoryId));
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        if (Mode == "Edit")
+        {
+            DeviceModel = await Repository.DeviceModels.FirstAsync(p => p.Id == Id) ?? new();
+        }
+
+        Categories = await Repository.Categories.ToDictionaryAsync(d => d.Name, d => d.Id);
+    }
+
+    public async Task UdateDeviceModelAsync()
+    {
+        if (Id == 0)
+        {
+            await Repository.CreateDeviceModel(DeviceModel);
+        }
+        else
+        {
+            await Repository.UpdateDeviceModel(DeviceModel);
+        }
+        NavManager?.NavigateTo("/admin/devicemodels");
+    }
+
+    public string ThemeColor => Id == 0 ? "primary" : "warning";
+    public string Mode => Id == 0 ? "Create" : "Edit";
+}

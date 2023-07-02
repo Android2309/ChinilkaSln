@@ -1,0 +1,105 @@
+﻿@page "/admin/products/edit/{id:long}"
+@page "/admin/products/create"
+@inherits OwningComponentBase<IChinilkaRepository>
+
+<h3 class="bg-@ThemeColor text-white text-center p-1">@Mode a Product</h3>
+<EditForm Model="Product" OnValidSubmit="UdateProductAsync">
+    <DataAnnotationsValidator />
+    @if (Mode == "Edit")
+    {
+        <div class="form-group">
+            <label>ID</label>
+            <input class="form-control" disabled value="@Product.Id" />
+        </div>
+    }
+    <div class="form-group">
+        <label>Название</label>
+        <ValidationMessage For="@(() => Product.Name)" />
+        <InputText class="form-control" @bind-Value="Product.Name" />
+    </div>
+    <div class="form-group">
+        <label>Описание</label>
+        <ValidationMessage For="@(() => Product.Description)" />
+        <InputText class="form-control" @bind-Value="Product.Description" />
+    </div>
+    <div class="form-group">
+        <label>Модель устройства</label>
+        <ValidationMessage For="@(() => Product.DeviceModelId)" />
+        <CustomSelect TValue="int" Values="DeviceModels"
+                      Parser="@((string str) => int.Parse(str))"
+                      @bind-Value="Product.DeviceModelId">
+            <option selected disabled value="0">Choose a Device Model</option>
+        </CustomSelect>
+    </div>
+    <div class="form-group">
+        <label>Цена</label>
+        <ValidationMessage For="@(() => Product.Price)" />
+        <InputNumber class="form-control" @bind-Value="Product.Price" />
+    </div>
+    <div class="form-group">
+        <ValidationMessage For="@(() => Product.IsUsed)" />
+        <label>Состояние</label><br>
+        <div class="form-control">
+            <InputRadioGroup Name="Used" @bind-Value="Product.IsUsed" class="form-check">
+                Б/У
+                <InputRadio Name="Used" Value="@true" class="form-check-input" />
+                НОВЫЙ
+                <InputRadio Name="Used" Value="@false" class="form-check-input" />
+            </InputRadioGroup>
+        </div>
+    </div>
+    <div class="form-group">
+        <ValidationMessage For="@(() => Product.ImagePath)" />
+        <label>Путь к картинке</label>
+        <InputText class="form-control" @bind-Value="Product.ImagePath" />
+    </div>
+    <div class="mt-2">
+        <button type="submit" class="btn btn-@ThemeColor">Сохранить</button>
+        <NavLink class="btn btn-secondary" href="/admin/products">Отмена</NavLink>
+    </div>
+</EditForm>
+
+@code {
+    public IChinilkaRepository Repository => Service;
+
+    [Inject]
+    public NavigationManager? NavManager { get; set; }
+
+    [Parameter]
+    public long Id { get; set; } = 0;
+
+    public Product Product { get; set; } = new();
+
+    public IDictionary<string, int> DeviceModels { get; set; } = new Dictionary<string, int>();
+
+    private DeviceModel ParseDeviceModel(string deviceId)
+    {
+        return Repository.DeviceModels.First(_ => _.Id == long.Parse(deviceId));
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        if (Mode == "Edit")
+        {
+            Product = await Repository.Products.FirstAsync(p => p.Id == Id) ?? new();
+        }
+
+        DeviceModels = await Repository.DeviceModels.ToDictionaryAsync(d => d.Name, d => d.Id);
+    }
+
+    public async Task UdateProductAsync()
+    {
+        if (Id == 0)
+        {
+            await Repository.CreateProduct(Product);
+        }
+        else
+        {
+            await Repository.UpdateProduct(Product);
+        }
+        NavManager?.NavigateTo("/admin/products");
+    }
+
+    public string ThemeColor => Id == 0 ? "primary" : "warning";
+    public string Mode => Id == 0 ? "Create" : "Edit";
+}

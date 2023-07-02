@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Chinilka</title>
+    <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="~/css/style.css" rel="stylesheet" />
+</head>
+<body class="bg-light bg-gradient">
+    <header>
+        <div class="collapse" id="navbarToggleExternalContent">
+            <div class="bg-dark p-4">
+                <h5 class="text-white h4">Свернутый контент</h5>
+                <span class="text-muted">Переключаемый через бренд навигационной панели.</span>
+            </div>
+        </div>
+        <div class="bg-dark">
+            <div class="container text-center">
+                <div class="row py-2 align-items-center">
+                    <div class="col-3">
+                        <a asp-action="" asp-controller="Home">
+                            <img src="~/images/brand_horizontal.png" alt="Чинилка" class="header-brand" />
+                        </a>
+                    </div>
+                    <div class="col-6 d-flex justify-content-around collapse" id="navbarTop">
+                        <a class="fs-5 hover-text-orange focus-text-orange" asp-action="" asp-controller="Home">Главная</a>
+                        <a class="fs-5 hover-text-orange focus-text-orange" href="~/Home#about-us">О нас</a>
+                        <a class="fs-5 hover-text-orange focus-text-orange" href="~/Home#services">Услуги</a>
+                        <a class="fs-5 hover-text-orange focus-text-orange" href="~/Home#discounts">Акции</a>
+                        <a class="fs-5 hover-text-orange focus-text-orange" asp-action="Products" asp-controller="Home"
+                           asp-route-isUsed="true" asp-route-deviceModel="@String.Empty">
+                            Б/У
+                        </a>
+                        <a class="fs-5 hover-text-orange focus-text-orange" href="~/Home#trade-in">Trade-in</a>
+                        <a class="fs-5 hover-text-orange focus-text-orange" href="~/Home#contacts">Контакты</a>
+                    </div>
+
+                    <div class="col-3 d-flex flex-column justify-content-end">
+                        <a href="tel:+79604681997">
+                            <img src="~/images/icon_phone.svg" width="20">
+                            <span>+7(960)468-19-97</span>
+                        </a>
+                        <partial name="_LoginInfo" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bg-black">
+            <div class="container text-center">
+                <div id="categories">
+                    <vc:navigation-menu />
+                </div>
+            </div>
+        </div>
+    </header>
+    @RenderBody()
+    <footer>
+        <section class="bg-dark py-4">
+            <div class="container">
+                <div class="row text-white">
+                    <div class="col-3">
+                        <h4>Товары</h4>
+                        <ul class="list-unstyled">
+                            <li><a class="fs-5 hover-text-orange focus-text-orange" asp-action="" asp-controller="">Каталог</a></li>
+                            <li><a class="fs-5 hover-text-orange focus-text-orange" asp-action="" asp-controller="">Акции</a></li>
+                            <li><a class="fs-5 hover-text-orange focus-text-orange" asp-action="" asp-controller="">Услуги</a></li>
+                            <li><a class="fs-5 hover-text-orange focus-text-orange" asp-action="" asp-controller="">Trade-in</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-3">
+                        <h4>Информация</h4>
+                        <ul class="list-unstyled">
+                            <li><a class="fs-5 hover-text-orange focus-text-orange" asp-action="" asp-controller="">О нас</a></li>
+                            <li><a class="fs-5 hover-text-orange focus-text-orange" asp-action="" asp-controller="">Отзывы</a></li>
+                            <li> <a class="fs-5 hover-text-orange focus-text-orange" asp-action="" asp-controller="">Частые вопросы</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-3">
+                        <h4><a class="text-white" asp-action="" asp-controller="">Контакты</a></h4>
+                        <ul class="list-unstyled">
+                            <li>
+                                <img src="~/images/icon_location.svg" width="20">
+                                <span>Магазин - сервис "Чинилка", ул. Огородная д.76, Северный жил.массив, Батайск</span>
+                            </li>
+                            <li>
+                                <a href="tel:+79604681997">
+                                    <img src="~/images/icon_phone.svg" width="20">
+                                    <span>+7(960)468-19-97</span>
+                                </a>
+                            </li>
+                            <li>
+                                <img src="~/images/icon_clock.svg" width="20">
+                                <span>Пн-Пт 10:00-22:00, Сб-Вс 12:00-19:00</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-3">
+                        <h4>Мы в сети</h4>
+                        <ul class="list-unstyled">
+                            <li class="py-2">
+                                <a href="https://instagram.chinilka_61 ">
+                                    <img src="~/images/icon_instagram.svg" class="me-2" width="40">
+                                    <span>@@chinilka_61</span>
+                                </a>
+                            </li>
+                            <li class="py-2">
+                                <a href="https://vk.com/chinilka61">
+                                    <img src="~/images/icon_vk.svg" class="me-2" width="40">
+                                    <span>vk.com/chinilka61</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </footer>
+
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

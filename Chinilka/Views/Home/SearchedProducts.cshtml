@@ -1,0 +1,18 @@
+﻿@model SearchedProductsListViewModel
+
+<div class="container">
+    <div class="row my-4">
+        @foreach (var deviceModel in Model.Products ?? Enumerable.Empty<Product>())
+        {
+            <div class="col-3 mb-4">
+                <partial name="_ProductSummary" model="deviceModel" />
+            </div>
+        }
+    </div>
+
+    <div page-model="@Model?.PagingInfo" page-action="SearchedProducts" page-classes-enabled="true"
+         page-class="btn" page-class-normal="btn-outline-dark"
+         page-class-selected="btn-primary" page-url-searchString="@Model?.SearchString!" class="btn-group pull-right m-1">
+    </div>
+</div>
+

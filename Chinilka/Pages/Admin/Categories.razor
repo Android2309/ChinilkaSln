@@ -1,0 +1,70 @@
+﻿@page "/admin/categories"
+@inherits OwningComponentBase<IChinilkaRepository>
+
+<h3>Категории</h3>
+<table class="table table-sm table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <td />
+        </tr>
+    </thead>
+    <tbody>
+        @if (CategoryData?.Count() > 0)
+        {
+            @foreach (Category category in CategoryData)
+            {
+                <tr>
+                    <td>@category.Id</td>
+                    <td>@category.Name</td>
+                    <td>
+                        <NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(category.Id)">
+                            Изменить
+                        </NavLink>
+                        <button class="btn btn-danger btn-sm" @onclick="@(e => DeleteCategory(category))">
+                            Удалить
+                        </button>
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td></td>
+                <td></td>
+                <td>
+                    <NavLink class="btn btn-primary" href="/admin/categories/create">Добавить</NavLink>
+                </td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center">Категории отсутствуют</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@code {
+    public IChinilkaRepository Repository => Service;
+    public IEnumerable<Category> CategoryData { get; set; } = Enumerable.Empty<Category>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        await UpdateData();
+    }
+
+    public async Task UpdateData()
+    {
+        CategoryData = await Repository.Categories.ToListAsync();
+    }
+
+    public async Task DeleteCategory(Category category)
+    {
+        await Repository.DeleteCategory(category);
+        await UpdateData();
+    }
+
+    public string GetEditUrl(long id) => $"/admin/categories/edit/{id}";
+}

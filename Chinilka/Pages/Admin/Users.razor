@@ -1,0 +1,68 @@
+﻿@page "/admin/users"
+@using Chinilka.Models.ViewModels;
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<ChinilkaUser> UserManager;
+
+<h3>Пользователи</h3>
+<table class="table table-sm table-bordered">
+    <tr><th>Имя</th><th>Логин</th><th>Email</th><th>Телефон</th></tr>
+    @if (UsersDispalyList.Count() == 0)
+    {
+        <tr><td colspan="4" class="text-center">No User Accounts</td></tr>
+    }
+    else
+    {
+        foreach (var user in UsersDispalyList)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Login</td>
+                <td>@user.Email</td>
+                <td>@user.PhoneNumber</td>
+            </tr>
+        }
+    }
+</table>
+
+<EditForm Model="@PagingInfo" class="d-flex justify-content-center mb-1">
+    <div class="d-flex justify-content-center">
+        <label class="text-end me-2">Элементов на странице</label>
+        <InputNumber @bind-Value="PagingInfo.ItemsPerPage" @onfocusout="() => UpdateData()" @onchange="() => UpdateData()" style="max-width:100px" />
+    </div>
+</EditForm>
+<Pagination ActivePageNumber="@PagingInfo.CurrentPage" TotalPages="@PagingInfo.TotalPages" DisplayPages="@PagingInfo.ItemsPerPage"
+            PageChanged="OnPageChangedAsync" Alignment="Alignment.Center">
+</Pagination>
+
+@code {
+    public IEnumerable<ChinilkaUser> UserList { get; set; } = Enumerable.Empty<ChinilkaUser>();
+    private IEnumerable<ChinilkaUser> UsersDispalyList { get; set; } = Enumerable.Empty<ChinilkaUser>();
+
+    public PagingInfo PagingInfo { get; set; } = new PagingInfo { CurrentPage = 1, ItemsPerPage = 10 };
+
+    protected async override Task OnInitializedAsync()
+    {
+        await UpdateData();
+    }
+
+    private async Task OnPageChangedAsync(int newPageNumber)
+    {
+        await Task.Run(() =>
+        {
+            PagingInfo.CurrentPage = newPageNumber;
+        });
+
+        await UpdateData();
+    }
+
+    public async Task UpdateData(int currentPage = 1)
+    {
+        UserList = await UserManager.GetUsersInRoleAsync("User");
+        PagingInfo.TotalItems = UserList.Count();
+
+        UsersDispalyList = UserList
+            .Skip((PagingInfo.CurrentPage - 1) * PagingInfo.ItemsPerPage)
+            .Take(PagingInfo.ItemsPerPage)
+            .ToList();
+    }
+}

@@ -1,0 +1,179 @@
+﻿@page "/admin/products"
+@page "/admin"
+@using Chinilka.Infrastructure;
+@using Chinilka.Models.ViewModels;
+@using Chinilka.Services;
+@inherits OwningComponentBase<IChinilkaRepository>
+@inject IWebHostEnvironment Environment
+
+<h3>Товары</h3>
+<table class="table table-sm table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Модель</th>
+            <th>Цена</th>
+            <td />
+        </tr>
+    </thead>
+    <tbody>
+        @if (ProductDisplayList?.Count() > 0)
+        {
+            @foreach (Product p in ProductDisplayList)
+            {
+                <tr>
+                    <td>@p.Id</td>
+                    <td>@p.Name</td>
+                    <td>@p.DeviceModel?.Name</td>
+                    <td>@p.Price.ToString("c")</td>
+                    <td>
+                        <NavLink class="btn btn-info btn-sm" href="@GetDetailsUrl(p.Id)">
+                            Подробнее
+                        </NavLink>
+                        <NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(p.Id)">
+                            Изменить
+                        </NavLink>
+                        <Button class="btn btn-danger btn-sm" @onclick="@(e => OnShowModalDeleteClick(p))">
+                            Удалить
+                        </Button>
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="flex-column">
+                    <NavLink class="btn btn-primary" href="/admin/products/create">Добавить</NavLink>
+                    <Button class="btn btn-primary" @onclick="@(e => OnShowModalLoadFromFileClick())">Загрузить из файла</Button>
+                </td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center">Товары отсутсвуют</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<EditForm Model="@PagingInfo" class="d-flex justify-content-center mb-1">
+    <div class="d-flex justify-content-center">
+        <label class="text-end me-2">Элементов на странице</label>
+        <InputNumber @bind-Value="PagingInfo.ItemsPerPage" @onfocusout="() => UpdateData()" @onchange="() => UpdateData()" style="max-width:100px" />
+    </div>
+</EditForm>
+<Pagination ActivePageNumber="@PagingInfo.CurrentPage" TotalPages="@PagingInfo.TotalPages" DisplayPages="@PagingInfo.ItemsPerPage"
+            PageChanged="OnPageChangedAsync" Alignment="Alignment.Center">
+</Pagination>
+
+<Modal @ref="modalDelete" title="Удалить товар?" UseStaticBackdrop="true">
+    <BodyTemplate>
+        Id: @ProductToDelete.Id <br>
+        @ProductToDelete.Name
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="modalDelete.HideAsync">Отмена</Button>
+        <Button Color="ButtonColor.Primary" @onclick="@(e => DeleteProduct(ProductToDelete))">Удалить</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="modalLoadFromFile" title="Загрузить товары из файла" UseStaticBackdrop="true">
+    <BodyTemplate>
+        <InputFile OnChange="@OnInputFileChange" />
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="modalLoadFromFile.HideAsync">Отмена</Button>
+        <Button Color="ButtonColor.Primary" @onclick="@(e => LoadFromFileAsync(loadedFile))">Загрузить</Button>
+    </FooterTemplate>
+</Modal>
+
+@code {
+    private IChinilkaRepository Repository => Service;
+
+    private IEnumerable<Product> ProductDisplayList { get; set; } = Enumerable.Empty<Product>();
+    private PagingInfo PagingInfo { get; set; } = new PagingInfo { CurrentPage = 1, ItemsPerPage = 10 };
+    private Product ProductToDelete { get; set; } = new();
+
+    private Modal modalDelete = default!;
+    private Modal modalLoadFromFile = default!;
+
+    private IBrowserFile? loadedFile;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await UpdateData();
+    }
+
+    private async Task OnPageChangedAsync(int newPageNumber)
+    {
+        await Task.Run(() =>
+        {
+            PagingInfo.CurrentPage = newPageNumber;
+        });
+
+        await UpdateData();
+    }
+
+    private async Task UpdateData()
+    {
+        PagingInfo.TotalItems = await Repository.Products.CountAsync();
+
+        ProductDisplayList = await Repository.Products
+           .Skip((PagingInfo.CurrentPage - 1) * PagingInfo.ItemsPerPage)
+           .Take(PagingInfo.ItemsPerPage)
+           .ToListAsync();
+    }
+
+    private async Task DeleteProduct(Product p)
+    {
+        await Repository.DeleteProduct(p);
+        await modalDelete.HideAsync();
+        await UpdateData();
+    }
+
+    private async Task OnShowModalDeleteClick(Product productToDelete)
+    {
+        ProductToDelete = productToDelete;
+        await modalDelete.ShowAsync();
+    }
+
+    private async Task OnShowModalLoadFromFileClick()
+    {
+        await modalLoadFromFile.ShowAsync();
+    }
+
+    private void OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        loadedFile = e.File;
+    }
+
+    private async Task LoadFromFileAsync(IBrowserFile? file)
+    {
+        if (file == null)
+            return;
+        try
+        {
+            var path = Path.Combine(Environment.ContentRootPath, "loadData.csv");
+            using (var stream = System.IO.File.Create(path))
+                await file.OpenReadStream().CopyToAsync(stream);
+
+            var dataLoader = new LoadCsvDataService(Service);
+            await dataLoader.LoadFromFileAsync(path);
+            System.IO.File.Delete(path);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+        loadedFile = null;
+
+        await modalLoadFromFile.HideAsync();
+    }
+
+    private string GetDetailsUrl(long id) => $"/admin/products/details/{id}";
+    private string GetEditUrl(long id) => $"/admin/products/edit/{id}";
+}

@@ -1,0 +1,9 @@
+﻿@model DeviceModel
+
+<a class="card" asp-action="Products" asp-controller="Home" asp-route-deviceModel="@Model.Name">
+    <div class="card-body text-dark">
+        <h5 class="card-title">@Model.Name</h5>
+        <p class="card-text">@Model.Description</p>
+    </div>
+    <img src="@Model.ImagePath" class="card-img" alt="@Model.ImagePath">
+</a>

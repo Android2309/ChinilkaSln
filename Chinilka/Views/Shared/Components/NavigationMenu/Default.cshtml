@@ -1,0 +1,28 @@
+﻿@model IEnumerable<string>
+
+<div class="row py-3 align-items-center">
+    <div class="col-lg-8 d-flex justify-content-around">
+        @foreach (string category in Model ?? Enumerable.Empty<string>())
+        {
+            <a class="fs-5 @(category == ViewBag.SelectedCategory ? "navigation-menu-selectedtext": "") hover-text-orange focus-text-orange navigation-menu-text"
+               asp-action="DeviceModels"
+               asp-controller="Home"
+               asp-route-category="@category">
+                @category
+            </a>
+        }
+    </div>
+    <div class="col-lg-3">
+        <form class="d-flex" role="search">
+            <input class="form-control me-2" type="search" placeholder="Поиск по каталогу" aria-label="Search" name="searchString">
+            <button class="btn btn-outline-success" type="submit" 
+                    asp-action="SearchedProducts"
+                    asp-controller="Home">
+                Найти
+            </button>
+        </form>
+    </div>
+    <div class="col-1 text-end">
+        <vc:cart-summary />
+    </div>
+</div>
