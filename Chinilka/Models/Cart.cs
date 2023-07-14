@@ -2,6 +2,7 @@
 
 namespace Chinilka.Models
 {
+    // Что в моделе делает логика?
     public class Cart
     {
         public List<CartLine> Lines { get; set; } = new List<CartLine>();

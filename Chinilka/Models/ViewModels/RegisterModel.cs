@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
+// Зачем?
 #nullable disable
 
 namespace Chinilka.Models.ViewModels
 {
     public class RegisterModel
     {
+        // Что с локализацией делать планируешь? В Program.cs локализация упоминалась.
+
         [Required]
         [DataType(DataType.EmailAddress)]
         [Display(Name = "Email")]

@@ -13,5 +13,7 @@ namespace Chinilka.Models
         public DbSet<DeviceModel> DeviceModels => Set<DeviceModel>();
         public DbSet<Order> Orders => Set<Order>();
         public DbSet<CartLine> CartLines => Set<CartLine>();
+
+        // И Всё? Где индексы?
     }
 }

@@ -19,6 +19,7 @@ namespace Chinilka.Models
 
             AddDeviceModels(context);
 
+            // Что это делает в продакшене?
             AddTestProducts(context);
         }
 

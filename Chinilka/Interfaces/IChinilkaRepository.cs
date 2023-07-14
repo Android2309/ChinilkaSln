@@ -2,6 +2,7 @@
 
 namespace Chinilka.Interfaces
 {
+    // Почему выбор пал на паттерн репозитория? Это не плохо, мне интересны причины.
     public interface IChinilkaRepository
     {
         IQueryable<Product> Products { get; }

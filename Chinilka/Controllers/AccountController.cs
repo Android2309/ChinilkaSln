@@ -11,21 +11,26 @@ namespace Chinilka.Controllers
         private UserManager<ChinilkaUser> userManager;
         private SignInManager<ChinilkaUser> signInManager;
 
+        // Не лень же было вручную контроллер прописывать. Студия через средства рефакторинга умеет добавлять аргументы к конструктору.
         public AccountController(UserManager<ChinilkaUser> userMgr, SignInManager<ChinilkaUser> signInMgr)
         {
             userManager = userMgr;
             signInManager = signInMgr;
         }
 
+        // Тут я не спец - им httpPost/httpGet не нужны?
         public ViewResult Login(string returnUrl) => View(new LoginModel { ReturnUrl = returnUrl });
         public ViewResult Register(string returnUrl) => View(new RegisterModel { ReturnUrl = returnUrl });
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel model)
         {
+            // Не критично, но в таких случаях чаще делают if (!conditional) return smth; else doOtherStaff();
             if (ModelState.IsValid)
             {
+                // Не забывай форматирование прожимать.
                 var user = new ChinilkaUser { 
+                    // Выглядит как работа для мапперов.
                     Email = model.Email, 
                     Login = model.Login , 
                     UserName = model.UserName, 

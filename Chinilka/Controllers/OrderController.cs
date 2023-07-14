@@ -9,8 +9,12 @@ namespace Chinilka.Controllers
     public class OrderController : Controller
     {
         private IChinilkaRepository repository;
+
+        // Это зачем в DI?
         private Cart cart;
-        public OrderController(IChinilkaRepository repoService, Cart cartService)
+        public OrderController(IChinilkaRepository repoService
+            // Так всё же сервис, или корзина?
+            , Cart cartService)
         {
             repository = repoService;
             cart = cartService;

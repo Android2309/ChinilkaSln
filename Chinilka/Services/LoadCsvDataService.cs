@@ -40,12 +40,11 @@ namespace Chinilka.Services
 
                 while (!parser.EndOfData)
                 {
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-                    string[] fields = parser.ReadFields();
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+                    // https://joshclose.github.io/CsvHelper/
+                    var fields = parser.ReadFields()!;
                     var product = new Product
                     {
-                        Name = fields![0],
+                        Name = fields[0],
                         Description = fields[1],
                         Price = decimal.Parse(fields[2]),
                         DeviceModel = deviceModelList.First(d => d.Name == fields[3]),
@@ -60,6 +59,7 @@ namespace Chinilka.Services
         }
 
 
+        // Не используется.
         private async Task CreateTestCsvData(string filePath)
         {
             var sb = new StringBuilder();

@@ -14,6 +14,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ChinilkaDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration["ConnectionStrings:ChinilkaConnection"]);
+
+    // Зачем такое в проде?
     options.EnableSensitiveDataLogging(true);
 });
 
